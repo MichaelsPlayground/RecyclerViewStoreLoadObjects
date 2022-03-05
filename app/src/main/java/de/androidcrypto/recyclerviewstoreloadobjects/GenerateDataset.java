@@ -25,10 +25,12 @@ import java.util.Locale;
 public class GenerateDataset extends AppCompatActivity {
 
     Button isinDelete, yearDelete, generateDataset, printDataset;
-    Button saveDataset, loadDataset;
+    Button saveDataset, loadDataset, searchDataset;
     EditText stockIsin, entryYear;
 
     String stockMovementsFilename;
+
+    ArrayList<StockMovementsModal> bookingModelArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +43,12 @@ public class GenerateDataset extends AppCompatActivity {
         printDataset = findViewById(R.id.btnSDIYPrint);
         saveDataset = findViewById(R.id.btnSDIYSave);
         loadDataset = findViewById(R.id.btnSDIYLoad);
+        searchDataset = findViewById(R.id.btnSDIYSearch);
 
         stockIsin = findViewById(R.id.etSDIYStockIsin);
         entryYear = findViewById(R.id.etSDIYYear);
 
-        ArrayList<StockMovementsModal> bookingModelArrayList = new ArrayList<>();
+        //final ArrayList<StockMovementsModal>[] bookingModelArrayList = new ArrayList[]{new ArrayList<>()};
 
         isinDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -188,7 +191,41 @@ public class GenerateDataset extends AppCompatActivity {
                             " isin: " + bookingModelArrayListLoad.get(i).getStockIsin());
                 }
                 System.out.println("++ printout completed ++");
+                bookingModelArrayList = bookingModelArrayListLoad;
+            }
+        });
 
+        searchDataset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("*** search dataset ***");
+                String dateSearch = "2022-01-05";
+                String isinSearch = "IE00BJ0KDQ92A";
+                System.out.println("to search: date " + dateSearch + " ISIN " + isinSearch);
+                if (bookingModelArrayList == null) {
+                    System.out.println("ERROR: no datasets available");
+                    return;
+                }
+                int listSize = bookingModelArrayList.size();
+                if (listSize == 0) {
+                    System.out.println("ERROR: no datasets available");
+                    return;
+                } else {
+                    System.out.println("size all datasets: " + listSize);
+                }
+                // iterate through all datasets
+                StockMovementsModal stockMovementsModal;
+                for (int i = 0; i < listSize; i++) {
+                    stockMovementsModal = bookingModelArrayList.get(i);
+                    String date = stockMovementsModal.getDate();
+                    String isin = stockMovementsModal.getStockIsin();
+                    if (date.equals(dateSearch) && isin.equals(isinSearch)) {
+                        System.out.println("dataset found: " + i);
+                        return;
+                    }
+
+                }
+                System.out.println("no dataset found");
             }
         });
 
